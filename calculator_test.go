@@ -43,6 +43,13 @@ func TestDivide(t *testing.T) {
 
 func TestDivideByZero(t *testing.T) {
 	t.Parallel()
+
+	defer func() {
+		if r := recover(); r == nil {
+			t.Errorf("dammit no panic")
+		}
+	}()
+
 	var want float64 = 0
 	got := calculator.Divide(1, 0)
 	if want != got {
