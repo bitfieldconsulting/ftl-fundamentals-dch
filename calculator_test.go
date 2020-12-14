@@ -40,3 +40,12 @@ func TestDivide(t *testing.T) {
 		t.Errorf("want %f, got %f", want, got)
 	}
 }
+
+func TestDivideByZero(t *testing.T) {
+	t.Parallel()
+	var want float64 = 0
+	got := calculator.Divide(1, 0)
+	if want != got {
+		t.Errorf("want %f, got %f", want, got)
+	}
+}
