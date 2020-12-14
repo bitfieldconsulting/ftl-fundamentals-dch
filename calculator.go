@@ -11,3 +11,9 @@ func Add(a, b float64) float64 {
 func Subtract(a, b float64) float64 {
 	return a - b
 }
+
+// Divide takes two floats and returns the result of dividing the first
+// by the first.
+func Divide(a, b float64) float64 {
+	return a / b
+}
