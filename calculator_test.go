@@ -2,6 +2,7 @@ package calculator_test
 
 import (
 	"calculator"
+	"math"
 	"testing"
 )
 
@@ -43,14 +44,11 @@ func TestDivide(t *testing.T) {
 
 func TestDivideByZero(t *testing.T) {
 	t.Parallel()
-
-	defer func() {
-		if r := recover(); r == nil {
-			t.Errorf("dammit no panic")
-		}
-	}()
-
-	var want float64 = 0
+	// one does not simply assign a literal infinite
+	// it must be summoned from the darkest depths of stdlib
+	// and it comes signed
+	// https: //golang.org/test/zerodivide.go
+	var want float64 = math.Inf(+1)
 	got := calculator.Divide(1, 0)
 	if want != got {
 		t.Errorf("want %f, got %f", want, got)
