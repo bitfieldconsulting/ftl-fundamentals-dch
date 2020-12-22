@@ -11,13 +11,11 @@ func TestAdd(t *testing.T) {
 		a, b float64
 		want float64
 	}
-
 	testCases := []testCase{
 		{a: 2, b: 2, want: 4},
 	}
 
 	for _, tc := range testCases {
-
 		got := calculator.Add(tc.a, tc.b)
 		if tc.want != got {
 			t.Errorf("want %f, got %f", tc.want, got)
@@ -58,9 +56,11 @@ func TestDivideByZero(t *testing.T) {
 	// it must be summoned from the darkest depths of stdlib
 	// and it comes signed
 	// https: //golang.org/test/zerodivide.go
-	// var want float64 = math.Inf(+1)
-	// got := calculator.Divide(1, 0)
-	// if want != got {
-	// 	t.Errorf("want %f, got %f", want, got)
-	// }
+	// the value that go returns internally for divide by zero is a NaN
+	// +infinity, which can be generated with var float64 = math.Inf(+1)
+	_, err := calculator.Divide(1, 0)
+	// fail test unless error is not nil
+	if err == nil {
+		t.Error("wanted err, got nil")
+	}
 }
