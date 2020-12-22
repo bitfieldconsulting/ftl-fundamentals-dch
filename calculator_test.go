@@ -7,10 +7,21 @@ import (
 
 func TestAdd(t *testing.T) {
 	t.Parallel()
-	var want float64 = 4
-	got := calculator.Add(2, 2)
-	if want != got {
-		t.Errorf("want %f, got %f", want, got)
+	type testCase struct {
+		a, b float64
+		want float64
+	}
+
+	testCases := []testCase{
+		{a: 2, b: 2, want: 4},
+	}
+
+	for _, tc := range testCases {
+
+		got := calculator.Add(tc.a, tc.b)
+		if tc.want != got {
+			t.Errorf("want %f, got %f", tc.want, got)
+		}
 	}
 }
 
