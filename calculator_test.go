@@ -5,19 +5,19 @@ import (
 	"testing"
 )
 
-func TestAdd(t *testing.T) {
+func TestAddSubMul(t *testing.T) {
 	t.Parallel()
-	type testCase struct {
+	testCases := []struct {
+		fn     func(float64, float64, ...float64) float64
 		a, b   float64
 		extras []float64
 		want   float64
-	}
-	testCases := []testCase{
-		{a: 1, b: 2, want: 3},
-		{a: 3, b: 4, extras: []float64{4.0}, want: 11},
-		{a: 2, b: 2, extras: []float64{4}, want: 8},
-		{a: 0, b: 0, extras: []float64{1, 2, 3}, want: 6},
-		{a: 0.25, b: 0.5, extras: []float64{0.25}, want: 1},
+	}{
+		{fn: calculator.Add, a: 1, b: 2, want: 3},
+		{fn: calculator.Add, a: 3, b: 4, extras: []float64{4.0}, want: 11},
+		{fn: calculator.Add, a: 2, b: 2, extras: []float64{4}, want: 8},
+		{fn: calculator.Add, a: 0, b: 0, extras: []float64{1, 2, 3}, want: 6},
+		{fn: calculator.Add, a: 0.25, b: 0.5, extras: []float64{0.25}, want: 1},
 	}
 
 	for _, tc := range testCases {
