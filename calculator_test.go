@@ -4,6 +4,10 @@ import (
 	"calculator"
 	"math"
 	"testing"
+
+	"github.com/leanovate/gopter"
+	"github.com/leanovate/gopter/gen"
+	"github.com/leanovate/gopter/prop"
 )
 
 func TestAddSubMul(t *testing.T) {
@@ -102,4 +106,27 @@ func TestNegativeSquareRoot(t *testing.T) {
 	if err == nil {
 		t.Error("wanted err, got nil")
 	}
+}
+
+func TestProperties(t *testing.T) {
+	// t.Parallel()
+	// initialise our property testing
+	parameters := gopter.DefaultTestParameters()
+	// use a fixed seed so others can see the failure
+	parameters.Rng.Seed(2000)
+	// just enough tests to hit the first failure case
+	parameters.MinSuccessfulTests = 4000
+	properties := gopter.NewProperties(parameters)
+	// define a simple property
+	properties.Property("", prop.ForAll(
+		func(n float64) bool {
+			a := calculator.Add(n, n)
+			b := calculator.Multiply(n, 2)
+			c, _ := calculator.Divide(b, 2)
+			return ((a == b) && (c == n))
+		},
+		// gen.Float64Range(1, 100000),
+		gen.Float64(),
+	))
+	properties.TestingRun(t)
 }
