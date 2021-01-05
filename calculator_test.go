@@ -2,6 +2,7 @@ package calculator_test
 
 import (
 	"calculator"
+	"math"
 	"testing"
 )
 
@@ -37,25 +38,39 @@ func TestAddSubMul(t *testing.T) {
 
 func TestDivide(t *testing.T) {
 	t.Parallel()
-	var want float64 = 7
-	got, _ := calculator.Divide(63, 9)
-	if want != got {
-		t.Errorf("want %f, got %f", want, got)
+	testCases := []struct {
+		name        string
+		a, b        float64
+		want        float64
+		errExpected bool
+	}{
+		{name: "divide integers", a: 2, b: 2, want: 1, errExpected: false},
+		{name: "divide integers", a: 63, b: 9, want: 7, errExpected: false},
+		// use math.NaN() here as if we use an actual zero, flip the
+		// test to ... test the test ... it doesn't fail. we explicitly
+		// use NaN to ensure that we are testing the test we want to
+		// test, and a value that cannot pass the other leg.
+		// one does not simply assign a literal infinite
+		// it must be summoned from the darkest depths of stdlib
+		// and it comes signed
+		// https: //golang.org/test/zerodivide.go
+		// the value that go returns internally for divide by zero is a NaN
+		// +infinity, which can be generated with var float64 = math.Inf(+1)
+		{name: "divide by zero", a: 63, b: 0, want: math.NaN(), errExpected: true},
 	}
-}
 
-func TestDivideByZero(t *testing.T) {
-	t.Parallel()
-	// one does not simply assign a literal infinite
-	// it must be summoned from the darkest depths of stdlib
-	// and it comes signed
-	// https: //golang.org/test/zerodivide.go
-	// the value that go returns internally for divide by zero is a NaN
-	// +infinity, which can be generated with var float64 = math.Inf(+1)
-	_, err := calculator.Divide(1, 0)
-	// fail test unless error is not nil
-	if err == nil {
-		t.Error("wanted err, got nil")
+	for _, tc := range testCases {
+		got, err := calculator.Divide(tc.a, tc.b)
+		if tc.errExpected == false {
+			if tc.want != got {
+				t.Errorf("%v: given params %f, %f, wanted %f, got %f", tc.name, tc.a, tc.b, tc.want, got)
+			}
+		} else {
+			// expecting an error, so tc.want is not important
+			if err == nil {
+				t.Errorf("%v: given params %f, %f, wanted err, got nil", tc.name, tc.a, tc.b)
+			}
+		}
 	}
 }
 
