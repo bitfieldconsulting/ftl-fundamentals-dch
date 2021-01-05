@@ -8,22 +8,22 @@ import (
 func TestAddSubMul(t *testing.T) {
 	t.Parallel()
 	testCases := []struct {
+		name   string
 		fn     func(float64, float64, ...float64) float64
 		a, b   float64
 		extras []float64
 		want   float64
 	}{
-		{fn: calculator.Add, a: 1, b: 2, want: 3},
-		{fn: calculator.Add, a: 3, b: 4, extras: []float64{4.0}, want: 11},
-		{fn: calculator.Add, a: 2, b: 2, extras: []float64{4}, want: 8},
-		{fn: calculator.Add, a: 0, b: 0, extras: []float64{1, 2, 3}, want: 6},
-		{fn: calculator.Add, a: 0.25, b: 0.5, extras: []float64{0.25}, want: 1},
+		{name: "add 2 floats", fn: calculator.Add, a: 1, b: 2, want: 3},
+		{name: "add several floats", fn: calculator.Add, a: 3, b: 4, extras: []float64{4.0}, want: 11},
+		{name: "add only variadic floats", fn: calculator.Add, a: 0, b: 0, extras: []float64{1, 2, 3}, want: 6},
+		{name: "add fractional floats", fn: calculator.Add, a: 0.25, b: 0.5, extras: []float64{0.25}, want: 1},
 	}
 
 	for _, tc := range testCases {
-		got := calculator.Add(tc.a, tc.b, tc.extras...)
+		got := tc.fn(tc.a, tc.b, tc.extras...)
 		if tc.want != got {
-			t.Errorf("given params %f,%f, and slice %v want %f, got %f", tc.a, tc.b, tc.extras, tc.want, got)
+			t.Errorf("%v: given params %f,%f, and slice %v want %f, got %f", tc.name, tc.a, tc.b, tc.extras, tc.want, got)
 		}
 	}
 }
