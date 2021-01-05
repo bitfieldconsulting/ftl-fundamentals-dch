@@ -18,6 +18,8 @@ func TestAddSubMul(t *testing.T) {
 		{name: "add several floats", fn: calculator.Add, a: 3, b: 4, extras: []float64{4.0}, want: 11},
 		{name: "add only variadic floats", fn: calculator.Add, a: 0, b: 0, extras: []float64{1, 2, 3}, want: 6},
 		{name: "add fractional floats", fn: calculator.Add, a: 0.25, b: 0.5, extras: []float64{0.25}, want: 1},
+		{name: "subtract floats", fn: calculator.Subtract, a: 4, b: 2, want: 2},
+		{name: "subtract variadic floats", fn: calculator.Subtract, a: 4, b: 2, extras: []float64{0.5, -0.5}, want: 2},
 	}
 
 	for _, tc := range testCases {

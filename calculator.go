@@ -3,7 +3,7 @@ package calculator
 
 import "errors"
 
-// Add takes two numbers and returns the result of adding them together.
+// Add takes two or more numbers and returns the result of adding them together.
 func Add(a, b float64, extras ...float64) float64 {
 	result := a + b
 	for _, v := range extras {
@@ -12,10 +12,11 @@ func Add(a, b float64, extras ...float64) float64 {
 	return result
 }
 
-// Subtract takes two numbers and returns the result of subtracting the second
-// from the first.
-func Subtract(a, b float64) float64 {
-	return a - b
+// Subtract takes two or more numbers and returns the result of the
+// initial number, after subtracting the remaining numbers from the
+// first.
+func Subtract(a, b float64, extras ...float64) float64 {
+	return a - Add(0, b, extras...)
 }
 
 // Multiply takes two floats and returns the result of multiplying the first
