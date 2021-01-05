@@ -1,7 +1,10 @@
 // Package calculator provides a library for simple calculations in Go.
 package calculator
 
-import "errors"
+import (
+	"errors"
+	"math"
+)
 
 // Add takes two or more numbers and returns the result of adding them together.
 func Add(a, b float64, extras ...float64) float64 {
@@ -40,4 +43,14 @@ func Divide(a, b float64) (float64, error) {
 		return 0, errors.New("invalid input (divide by zero is undefined)")
 	}
 	return a / b, nil
+}
+
+// SquareRoot takes a single float and returns the square root as result,
+// or an error if the input is invalid in some way.
+func SquareRoot(a float64) (float64, error) {
+	if a < 0 {
+		// return an explicit zero by convention
+		return 0, errors.New("invalid input (square root of -ve numbers is unimaginable)")
+	}
+	return math.Sqrt(a), nil
 }

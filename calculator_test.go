@@ -58,3 +58,33 @@ func TestDivideByZero(t *testing.T) {
 		t.Error("wanted err, got nil")
 	}
 }
+
+func TestSquareRoot(t *testing.T) {
+	t.Parallel()
+	testCases := []struct {
+		name string
+		a    float64
+		want float64
+	}{
+		{name: "square root of 9", a: 9, want: 3},
+		{name: "square root of 1", a: 1, want: 1},
+		{name: "square root of 0", a: 0, want: 0},
+		{name: "square root of fraction", a: 6.25, want: 2.5},
+	}
+
+	for _, tc := range testCases {
+		got, _ := calculator.SquareRoot(tc.a)
+		if tc.want != got {
+			t.Errorf("%v: given param %f, wanted %f, got %f", tc.name, tc.a, tc.want, got)
+		}
+	}
+}
+
+func TestNegativeSquareRoot(t *testing.T) {
+	t.Parallel()
+	_, err := calculator.SquareRoot(-1)
+	// fail test unless error is not nil
+	if err == nil {
+		t.Error("wanted err, got nil")
+	}
+}
