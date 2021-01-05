@@ -35,24 +35,6 @@ func TestAddSubMul(t *testing.T) {
 	}
 }
 
-func TestSubtract(t *testing.T) {
-	t.Parallel()
-	var want float64 = 2
-	got := calculator.Subtract(4, 2)
-	if want != got {
-		t.Errorf("want %f, got %f", want, got)
-	}
-}
-
-func TestMultiply(t *testing.T) {
-	t.Parallel()
-	var want float64 = 12
-	got := calculator.Multiply(3, 4)
-	if want != got {
-		t.Errorf("want %f, got %f", want, got)
-	}
-}
-
 func TestDivide(t *testing.T) {
 	t.Parallel()
 	var want float64 = 7
