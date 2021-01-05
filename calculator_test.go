@@ -13,8 +13,8 @@ func TestAdd(t *testing.T) {
 		want   float64
 	}
 	testCases := []testCase{
-		{a: 2, b: 2, want: 4},
-		{a: 2, b: 2, extras: []float64{4.0}, want: 4},
+		{a: 1, b: 2, want: 3},
+		{a: 3, b: 4, extras: []float64{4.0}, want: 11},
 		{a: 2, b: 2, extras: []float64{4}, want: 8},
 		{a: 0, b: 0, extras: []float64{1, 2, 3}, want: 6},
 		{a: 0.25, b: 0.5, extras: []float64{0.25}, want: 1},
