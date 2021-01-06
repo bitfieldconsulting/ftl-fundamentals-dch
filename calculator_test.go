@@ -123,7 +123,12 @@ func TestProperties(t *testing.T) {
 			a := calculator.Add(n, n)
 			b := calculator.Multiply(n, 2)
 			c, _ := calculator.Divide(b, 2)
-			return ((a == b) && (c == n))
+			if (a == b) && (c == n) {
+				return true
+			} else {
+				println("failed %v, got %v, %v, %v", n, a, b, c)
+				return false
+			}
 		},
 		// gen.Float64Range(1, 100000),
 		gen.Float64(),
