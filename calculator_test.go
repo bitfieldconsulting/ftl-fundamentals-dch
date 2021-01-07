@@ -2,6 +2,7 @@ package calculator_test
 
 import (
 	"calculator"
+	"fmt"
 	"math"
 	"testing"
 
@@ -9,6 +10,43 @@ import (
 	"github.com/leanovate/gopter/gen"
 	"github.com/leanovate/gopter/prop"
 )
+
+func TestParse(t *testing.T) {
+	t.Parallel()
+	testCases := []struct {
+		name        string
+		input       string
+		left        float64
+		right       float64
+		operator    string
+		errExpected bool
+	}{
+		{name: "send empty string ''", input: "", left: 0, right: 0, operator: "", errExpected: true},
+		{name: "send wrongly typed values", input: "wrongly typed values", left: 0, right: 0, operator: "", errExpected: true},
+		{name: "send far too many values", input: "1 2 3 4", left: 0, right: 0, operator: "", errExpected: true},
+		{name: "add 2 floats", input: "3 + 2", left: 3, right: 2, operator: "+", errExpected: false},
+		{name: "multiply 2 floats", input: "3 * 2", left: 3, right: 2, operator: "*", errExpected: false},
+		{name: "divide 2 floats", input: "3 / 2", left: 3, right: 2, operator: "/", errExpected: false},
+		{name: "subtract 2 floats", input: "3 - 2", left: 3, right: 2, operator: "-", errExpected: false},
+	}
+
+	for _, tc := range testCases {
+		left, right, operator, err := calculator.Parse(tc.input)
+		// fmt.Printf("%v: want %v, got %v %v %v, err %v\n", tc.name, tc.input, left, right, operator, err)
+
+		if tc.errExpected == false {
+			if (tc.left != left) || (tc.right != right) || (tc.operator != operator) {
+				// unexpected error
+				t.Errorf("%v: given params %v, got %v %v %v, err %v", tc.name, tc.input, left, operator, right, err)
+			}
+		} else {
+			// expecting an error, so ignore all resultrs
+			if err == nil {
+				t.Errorf("%v: given params %v, wanted err, got nil", tc.name, tc.input)
+			}
+		}
+	}
+}
 
 func TestAddSubMul(t *testing.T) {
 	t.Parallel()
@@ -126,12 +164,12 @@ func TestProperties(t *testing.T) {
 			if (a == b) && (c == n) {
 				return true
 			} else {
-				println("failed %v, got %v, %v, %v", n, a, b, c)
+				fmt.Printf("failed %v, got %v, %v, %v\n", n, a, b, c)
 				return false
 			}
 		},
-		// gen.Float64Range(1, 100000),
-		gen.Float64(),
+		gen.Float64Range(1, 100000),
+		// gen.Float64(),
 	))
 	properties.TestingRun(t)
 }
