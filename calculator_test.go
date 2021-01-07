@@ -11,38 +11,36 @@ import (
 	"github.com/leanovate/gopter/prop"
 )
 
-func TestParse(t *testing.T) {
+func TestEvaluate(t *testing.T) {
 	t.Parallel()
 	testCases := []struct {
 		name        string
 		input       string
-		left        float64
-		right       float64
-		operator    string
+		res         float64
 		errExpected bool
 	}{
-		{name: "send empty string ''", input: "", left: 0, right: 0, operator: "", errExpected: true},
-		{name: "send wrongly typed values", input: "wrongly typed values", left: 0, right: 0, operator: "", errExpected: true},
-		{name: "send far too many values", input: "1 2 3 4", left: 0, right: 0, operator: "", errExpected: true},
-		{name: "add 2 floats", input: "3 + 2", left: 3, right: 2, operator: "+", errExpected: false},
-		{name: "multiply 2 floats", input: "3 * 2", left: 3, right: 2, operator: "*", errExpected: false},
-		{name: "divide 2 floats", input: "3 / 2", left: 3, right: 2, operator: "/", errExpected: false},
-		{name: "subtract 2 floats", input: "3 - 2", left: 3, right: 2, operator: "-", errExpected: false},
+		{name: "send empty string ''", input: "", errExpected: true},
+		{name: "send wrongly typed values", input: "wrongly typed values", errExpected: true},
+		{name: "send far too many values", input: "1 2 3 4", errExpected: true},
+		{name: "add 2 floats", input: "3 + 2", res: 5, errExpected: false},
+		{name: "multiply 2 floats", input: "3 * 2", res: 6, errExpected: false},
+		{name: "divide 2 floats", input: "3 / 2", res: 1.5, errExpected: false},
+		{name: "subtract 2 floats", input: "3 - 2", res: 1, errExpected: false},
+		{name: "parse sneaky floats", input: ".6 + -0.6", res: 0, errExpected: false},
 	}
 
 	for _, tc := range testCases {
-		left, right, operator, err := calculator.Parse(tc.input)
-		// fmt.Printf("%v: want %v, got %v %v %v, err %v\n", tc.name, tc.input, left, right, operator, err)
+		res, err := calculator.Evaluate(tc.input)
 
-		if tc.errExpected == false {
-			if (tc.left != left) || (tc.right != right) || (tc.operator != operator) {
-				// unexpected error
-				t.Errorf("%v: given params %v, got %v %v %v, err %v", tc.name, tc.input, left, operator, right, err)
-			}
-		} else {
-			// expecting an error, so ignore all resultrs
+		if tc.errExpected == true {
+			// expecting an error, so ignore results
 			if err == nil {
 				t.Errorf("%v: given params %v, wanted err, got nil", tc.name, tc.input)
+			}
+		} else {
+			if tc.res != res {
+				// unexpected error
+				t.Errorf("%v: given params %v, got %v", tc.name, tc.input, res)
 			}
 		}
 	}

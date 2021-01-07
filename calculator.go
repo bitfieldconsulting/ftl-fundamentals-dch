@@ -58,33 +58,39 @@ func SquareRoot(a float64) (float64, error) {
 	return math.Sqrt(a), nil
 }
 
-// Parse takes a single string and attempts to parse it into 3 values:
+// Evaluate takes a single string and attempts to parse it into 3 values:
 // float64, float64, string
 // else returns an error
-func Parse(input string) (float64, float64, string, error) {
+// and finally then evaluates the requested equation
+func Evaluate(input string) (float64, error) {
 	s := regexp.MustCompile(" +").Split(input, 3)
 	if len(s) != 3 {
-		return 0, 0, "", errors.New("invalid input (parameter length !3")
+		return 0, errors.New("invalid input (parameter length !3")
 	}
 
 	left, err := strconv.ParseFloat(s[0], 64)
 	if err != nil {
-		return 0, 0, "", fmt.Errorf("invalid input (%v could not be parsed as float64)", s[0])
+		return 0, fmt.Errorf("invalid input (%v could not be parsed as float64)", s[0])
 	}
 
 	right, err := strconv.ParseFloat(s[2], 64)
 	if err != nil {
-		return 0, 0, "", fmt.Errorf("invalid input (%v could not be parsed as float64)", s[2])
+		return 0, fmt.Errorf("invalid input (%v could not be parsed as float64)", s[2])
 	}
+	// re-initialise error for clarity
+	err = nil
+
 	operator := s[1]
 	switch operator {
 	case "*":
+		return Multiply(left, right), nil
 	case "/":
+		return Divide(left, right)
 	case "+":
+		return Add(left, right), nil
 	case "-":
+		return Subtract(left, right), nil
 	default: // errors just fall out
-		return 0, 0, "", fmt.Errorf("invalid input (%v could not be parsed as one of */+-)", operator)
+		return 0, fmt.Errorf("invalid input (%v could not be parsed as one of */+-)", operator)
 	}
-	return left, right, operator, nil
-
 }
