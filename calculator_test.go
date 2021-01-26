@@ -11,6 +11,7 @@ import (
 	"github.com/leanovate/gopter/prop"
 )
 
+
 func TestEvaluate(t *testing.T) {
 	t.Parallel()
 	testCases := []struct {
@@ -55,7 +56,12 @@ func TestAddSubMul(t *testing.T) {
 		extras []float64
 		want   float64
 	}{
-		{name: "add 2 floats", fn: calculator.Add, a: 1, b: 2, want: 3},
+		{
+			name: "add 2 floats",
+			fn: calculator.Add,
+			a: 1, b: 2,
+			want: 3,
+		},
 		{name: "add several floats", fn: calculator.Add, a: 3, b: 4, extras: []float64{4.0}, want: 11},
 		{name: "add only variadic floats", fn: calculator.Add, a: 0, b: 0, extras: []float64{1, 2, 3}, want: 6},
 		{name: "add fractional floats", fn: calculator.Add, a: 0.25, b: 0.5, extras: []float64{0.25}, want: 1},
@@ -86,6 +92,7 @@ func TestDivide(t *testing.T) {
 	}{
 		{name: "divide integers", a: 2, b: 2, want: 1, errExpected: false},
 		{name: "divide integers", a: 63, b: 9, want: 7, errExpected: false},
+		{name: "recurring decimal", a: 2, b: 3, want: 0.666667, errExpected: false},
 		// use math.NaN() here as if we use an actual zero, flip the
 		// test to ... test the test ... it doesn't fail. we explicitly
 		// use NaN to ensure that we are testing the test we want to
@@ -100,19 +107,21 @@ func TestDivide(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		got, err := calculator.Divide(tc.a, tc.b)
-		if !tc.errExpected {
-			// not expecting an error, if expected == received we are OK
-			if tc.want != got {
-				t.Errorf("%v: given params %f, %f, wanted %f, got %f", tc.name, tc.a, tc.b, tc.want, got)
+		t.Run(tc.name, func(t *testing.T) {
+			got, err := calculator.Divide(tc.a, tc.b)
+			errReceived := err != nil
+			if tc.errExpected != errReceived {
+				t.Fatalf("unexpected error status %v", err)
 			}
-		} else {
-			// expecting an error, so tc.want is not important
-			if err == nil {
-				t.Errorf("%v: given params %f, %f, wanted err, got nil", tc.name, tc.a, tc.b)
+			if !tc.errExpected && !closeEnough(tc.want, got) {
+				t.Errorf("given params %f, %f, wanted %f, got %f", tc.a, tc.b, tc.want, got)
 			}
-		}
+		})
 	}
+}
+
+func closeEnough(a, b float64) bool {
+	return math.Abs(a-b) < 0.000001
 }
 
 func TestSquareRoot(t *testing.T) {
@@ -127,29 +136,18 @@ func TestSquareRoot(t *testing.T) {
 		{name: "square root of 1", input: 1, want: 1},
 		{name: "square root of 0", input: 0, want: 0},
 		{name: "square root of fraction", input: 6.25, want: 2.5},
-		{name: "square root of -1", input: -1, want: 3}, // inconceivable!
+		{name: "square root of -1", input: -1, want: 3, errExpected: true}, // inconceivable!
 	}
 
 	for _, tc := range testCases {
 		got, err := calculator.SquareRoot(tc.input)
-		// 4 cases to handle but only 2 to check
-		if tc.errExpected && err == nil {
-			t.Errorf("%v: given param %f, wanted err, got nil", tc.name, tc.input)
-		} else {
-		if !tc.errExpected {
-			if tc.want != got {
-				t.Errorf("%v: given param %f, wanted %f, got %f", tc.name, tc.input, tc.want, got)
-			}
+		errReceived := err != nil
+		if tc.errExpected != errReceived {
+			t.Fatalf("unexpected error status %v", err)
 		}
-	}
-}
-
-func TestNegativeSquareRoot(t *testing.T) {
-	t.Parallel()
-	_, err := calculator.SquareRoot(-1)
-	// fail test unless error is not nil
-	if err == nil {
-		t.Error("wanted err, got nil")
+		if !tc.errExpected && tc.want != got {
+			t.Errorf("given params %f, wanted %f, got %f", tc.input, tc.want, got)
+		}
 	}
 }
 
