@@ -131,15 +131,15 @@ func TestSquareRoot(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		_, err := calculator.SquareRoot(tc.input)
+		got, err := calculator.SquareRoot(tc.input)
 		// 4 cases to handle but only 2 to check
 		if tc.errExpected && err == nil {
 			t.Errorf("%v: given param %f, wanted err, got nil", tc.name, tc.input)
-			// } else {
-			// if !tc.errExpected {
-			// 	if tc.want != got {
-			// 		t.Errorf("%v: given param %f, wanted %f, got %f", tc.name, tc.input, tc.want, got)
-			// 	}
+		} else {
+		if !tc.errExpected {
+			if tc.want != got {
+				t.Errorf("%v: given param %f, wanted %f, got %f", tc.name, tc.input, tc.want, got)
+			}
 		}
 	}
 }
