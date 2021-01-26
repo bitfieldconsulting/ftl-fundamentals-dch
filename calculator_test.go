@@ -118,20 +118,28 @@ func TestDivide(t *testing.T) {
 func TestSquareRoot(t *testing.T) {
 	t.Parallel()
 	testCases := []struct {
-		name string
-		a    float64
-		want float64
+		name        string
+		input       float64
+		want        float64
+		errExpected bool
 	}{
-		{name: "square root of 9", a: 9, want: 3},
-		{name: "square root of 1", a: 1, want: 1},
-		{name: "square root of 0", a: 0, want: 0},
-		{name: "square root of fraction", a: 6.25, want: 2.5},
+		{name: "square root of 9", input: 9, want: 3},
+		{name: "square root of 1", input: 1, want: 1},
+		{name: "square root of 0", input: 0, want: 0},
+		{name: "square root of fraction", input: 6.25, want: 2.5},
+		{name: "square root of -1", input: -1, want: 3}, // inconceivable!
 	}
 
 	for _, tc := range testCases {
-		got, _ := calculator.SquareRoot(tc.a)
-		if tc.want != got {
-			t.Errorf("%v: given param %f, wanted %f, got %f", tc.name, tc.a, tc.want, got)
+		_, err := calculator.SquareRoot(tc.input)
+		// 4 cases to handle but only 2 to check
+		if tc.errExpected && err == nil {
+			t.Errorf("%v: given param %f, wanted err, got nil", tc.name, tc.input)
+			// } else {
+			// if !tc.errExpected {
+			// 	if tc.want != got {
+			// 		t.Errorf("%v: given param %f, wanted %f, got %f", tc.name, tc.input, tc.want, got)
+			// 	}
 		}
 	}
 }
