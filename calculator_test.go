@@ -101,7 +101,8 @@ func TestDivide(t *testing.T) {
 
 	for _, tc := range testCases {
 		got, err := calculator.Divide(tc.a, tc.b)
-		if tc.errExpected == false {
+		if !tc.errExpected {
+			// not expecting an error, if expected == received we are OK
 			if tc.want != got {
 				t.Errorf("%v: given params %f, %f, wanted %f, got %f", tc.name, tc.a, tc.b, tc.want, got)
 			}
